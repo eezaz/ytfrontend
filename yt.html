@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Ad-Free Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        video {
+            width: 80%;
+            height: 400px;
+            margin-top: 20px;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <h2>YouTube Ad-Free Video Player</h2>
+    <input type="text" id="videoURL" placeholder="Paste YouTube video link here">
+    <button onclick="loadVideo()">Play Video</button>
+    <br>
+    <video id="player" controls>
+        <source id="videoSource" src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <script>
+async function loadVideo() {
+    let url = document.getElementById('videoURL').value;
+    let videoId = url.split('v=')[1]?.split('&')[0];
+
+    if (!videoId) {
+        alert('Invalid YouTube URL');
+        return;
+    }
+
+    console.log("Fetching video from backend...");
+
+    try {
+        let response = await fetch(`http://127.0.0.1:5000/get_video?video_id=${videoId}`);
+        let data = await response.json();
+
+        console.log("Backend Response:", data);
+
+        if (data.url) {
+            document.getElementById('videoSource').src = data.url;
+            document.getElementById('player').load();
+            console.log("Video loaded successfully!");
+        } else {
+            alert('Error fetching video');
+        }
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        alert('Failed to load video');
+    }
+}
+
+
+
+    </script>
+</body>
+</html>
